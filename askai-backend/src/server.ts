@@ -110,7 +110,7 @@ const getChunkContent = async (chunkId: string, token: string) => {
   return resJson
 }
 
-const getChunks = async () => {
+const getChunks = async (question: string) => {
   const apiRes = await fetch('https://inference-runner.hw.ask-ai.co/ask', {
     method: "POST",
     headers: {
@@ -118,7 +118,7 @@ const getChunks = async () => {
       'X-API-Key': '7c4e87e6-aef8-467a-b43a-4f80147453bf',
     },
     body: JSON.stringify({
-      "question": "What is the meaning of life?"
+      "question": question
     })
   })
 
@@ -130,14 +130,22 @@ const getChunks = async () => {
 }
 
 // Nav to login pg by default
-app.get('/', async (_: Request, res: Response) => {
-  console.log('Got new request: ')
-  const chunks = await getChunks()
+app.get('/:question', async (req: Request, res: Response) => {
+  const question = req.params.question
+  console.log('Got new request: ', question)
+  const chunks = await getChunks(question)
   const confidentChunkgs = chunks.filter(c => c.confidence >= 70)
+
+  console.log('Confident chunks: ')
+  console.log(confidentChunkgs)
 
   const token = await getToken()
 
-  const chunkContents = await Promise.all(confidentChunkgs.map(c => getChunkContent(c.chunkId, token)))
+  const chunkContents = await Promise.all(confidentChunkgs.map(async c => ({
+    content: await getChunkContent(c.chunkId, token),
+    confidence: c.confidence
+  })))
+  
   console.log(chunkContents)
   res.send(JSON.stringify(chunkContents))
 });
