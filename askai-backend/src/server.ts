@@ -19,6 +19,8 @@ import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 
 import { NodeEnvs } from '@src/constants/misc';
 import { RouteError } from '@src/other/classes';
+const cors = require("cors");
+
 
 // **** Variables **** //
 
@@ -31,6 +33,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(EnvVars.CookieProps.Secret));
+app.use(cors())
 
 // Show routes called in console during development
 if (EnvVars.NodeEnv === NodeEnvs.Dev) {
@@ -128,6 +131,7 @@ const getChunks = async () => {
 
 // Nav to login pg by default
 app.get('/', async (_: Request, res: Response) => {
+  console.log('Got new request: ')
   const chunks = await getChunks()
   const confidentChunkgs = chunks.filter(c => c.confidence >= 70)
 
@@ -135,7 +139,7 @@ app.get('/', async (_: Request, res: Response) => {
 
   const chunkContents = await Promise.all(confidentChunkgs.map(c => getChunkContent(c.chunkId, token)))
   console.log(chunkContents)
-  res.send(chunkContents)
+  res.send(JSON.stringify(chunkContents))
 });
 
 // Redirect to login if not logged in.
