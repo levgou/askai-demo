@@ -11,7 +11,7 @@ const ResPart = ({ content, confidence }: { content: string, confidence: number 
         {content}
       </div>
       <div>
-        {confidence}
+        {confidence.toFixed(3)}
       </div>
     </div>
   )
