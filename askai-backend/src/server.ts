@@ -129,7 +129,6 @@ const getChunks = async (question: string) => {
   }[]
 }
 
-// Nav to login pg by default
 app.get('/:question', async (req: Request, res: Response) => {
   const question = req.params.question
   console.log('Got new request: ', question)
