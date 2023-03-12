@@ -79,7 +79,7 @@ app.use(express.static(staticDir));
 
 
 // ------------------------------------------------
-// ------------------------------------------------
+// Added code
 // ------------------------------------------------
 
 
@@ -148,16 +148,6 @@ app.get('/:question', async (req: Request, res: Response) => {
   
   console.log(chunkContents)
   res.send(JSON.stringify(chunkContents))
-});
-
-// Redirect to login if not logged in.
-app.get('/users', (req: Request, res: Response) => {
-  const jwt = req.signedCookies[EnvVars.CookieProps.Key];
-  if (!jwt) {
-    res.redirect('/');
-  } else {
-    res.sendFile('users.html', { root: viewsDir });
-  }
 });
 
 
